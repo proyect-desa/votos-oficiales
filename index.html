@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Resultados en vivo de las Elecciones del Gobierno y Brigada Estudiantil">
+    <meta name="theme-color" content="#1a237e">
+    
+    <title>Elecciones U.E. Samuel Muñoz Hurtado</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗳️</text></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="estilo.css">
+
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo-icon"><i class="fas fa-school"></i></div>
+                    <div class="logo-text">
+                        <h1 class="school-name">U.E. Samuel Muñoz Hurtado</h1>
+                        <p class="election-subtitle">Elecciones Estudiantiles 2026</p>
+                    </div>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Resultados Oficiales</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="status-bar">
+        <div class="container">
+            <div class="status-content">
+                <div class="live-indicator"><span class="pulse"></span><span>EN VIVO</span></div>
+                <div class="last-update"><i class="far fa-clock"></i><span id="lastUpdateText">Cargando...</span></div>
+                <button class="refresh-btn" id="refreshBtn" onclick="cargarTodosLosDatos()">
+                    <i class="fas fa-sync-alt"></i><span>Actualizar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="participation-grid">
+                <div class="participation-card">
+                    <div class="card-icon blue"><i class="fas fa-users"></i></div>
+                    <div class="card-info"><span class="card-label">Total Padrón</span><span class="card-value" id="totalPadron">--</span></div>
+                </div>
+                <div class="participation-card">
+                    <div class="card-icon green"><i class="fas fa-check-double"></i></div>
+                    <div class="card-info"><span class="card-label">Votos Emitidos</span><span class="card-value" id="totalEscrutados">--</span></div>
+                </div>
+                <div class="participation-card">
+                    <div class="card-icon orange"><i class="fas fa-chart-pie"></i></div>
+                    <div class="card-info"><span class="card-label">Participación</span><span class="card-value" id="participacion">--%</span></div>
+                </div>
+            </div>
+
+            <!-- GOBIERNO -->
+            <section class="election-section">
+                <div class="section-header">
+                    <div class="section-title"><i class="fas fa-landmark"></i><h2>Gobierno Estudiantil</h2></div>
+                    <div class="section-badge"><span>Presidente y Directiva</span></div>
+                </div>
+                <div class="chart-container"><canvas id="gobiernoChart"></canvas></div>
+                <div class="results-table-container">
+                    <table class="results-table">
+                        <thead><tr><th>Candidatura</th><th>Votos</th><th>Porcentaje</th><th class="bar-col">Barra</th></tr></thead>
+                        <tbody id="gobiernoTableBody"><tr><td colspan="4" class="loading-message">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+                <div class="others-container">
+                    <div class="other-item"><span class="other-label"><i class="far fa-square"></i>Blanco</span><span class="other-value" id="gobBlanco">--</span></div>
+                    <div class="other-item"><span class="other-label"><i class="fas fa-times"></i>Nulos</span><span class="other-value" id="gobNulo">--</span></div>
+                    <div class="other-item total-valid"><span class="other-label"><i class="fas fa-vote-yea"></i>Válidos</span><span class="other-value" id="gobValidos">--</span></div>
+                </div>
+            </section>
+
+            <!-- BRIGADA -->
+            <section class="election-section">
+                <div class="section-header">
+                    <div class="section-title"><i class="fas fa-shield-alt"></i><h2>Brigada Estudiantil</h2></div>
+                    <div class="section-badge"><span>Comandante y Estado Mayor</span></div>
+                </div>
+                <div class="chart-container"><canvas id="brigadaChart"></canvas></div>
+                <div class="results-table-container">
+                    <table class="results-table">
+                        <thead><tr><th>Candidatura</th><th>Votos</th><th>Porcentaje</th><th class="bar-col">Barra</th></tr></thead>
+                        <tbody id="brigadaTableBody"><tr><td colspan="4" class="loading-message">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+                <div class="others-container">
+                    <div class="other-item"><span class="other-label"><i class="far fa-square"></i>Blanco</span><span class="other-value" id="brigBlanco">--</span></div>
+                    <div class="other-item"><span class="other-label"><i class="fas fa-times"></i>Nulos</span><span class="other-value" id="brigNulo">--</span></div>
+                    <div class="other-item total-valid"><span class="other-label"><i class="fas fa-vote-yea"></i>Válidos</span><span class="other-value" id="brigValidos">--</span></div>
+                </div>
+            </section>
+
+            <!-- ÁNFORAS -->
+            <section class="anforas-section">
+                <div class="section-header">
+                    <div class="section-title"><i class="fas fa-archive"></i><h2>Detalle por Mesas / Ánforas</h2></div>
+                    <button class="toggle-btn" onclick="toggleAnforas()"><i class="fas fa-chevron-down" id="toggleIcon"></i></button>
+                </div>
+                <div class="anforas-content" id="anforasContent">
+                    <div class="table-scroll">
+                        <table class="anforas-table">
+                            <thead><tr><th>Ánfora</th><th>Padrón</th><th>Escrutados</th><th>GOB 1</th><th>GOB 2</th><th>GOB 3</th><th>BRIG A</th><th>BRIG B</th><th>BRIG G</th><th>Estado</th></tr></thead>
+                            <tbody id="anforasTableBody"><tr><td colspan="10" class="loading-message">Cargando...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div><p>© 2026 U.E. Samuel Muñoz Hurtado</p><p class="footer-small">Tribunal Electoral Estudiantil</p></div>
+                <div class="footer-links"><a href="#" onclick="window.location.reload()"><i class="fas fa-rotate-right"></i></a></div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ========== CONFIGURACIÓN ==========
+        const CONFIG = {
+            // ⚠️ REEMPLAZAR CON TUS URLs REALES
+            CSV_RESULTADOS_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQU-0SqMzjE2PtRmep1iDIgy0bI4yC6UmpctDS0i7A3cjsvIpFwe1qfWGsY3pUrAfg0HOE6sK5ncBLY/pub?gid=994855666&single=true&output=csv',
+            CSV_ANFORAS_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQU-0SqMzjE2PtRmep1iDIgy0bI4yC6UmpctDS0i7A3cjsvIpFwe1qfWGsY3pUrAfg0HOE6sK5ncBLY/pub?gid=0&single=true&output=csv', // ← CAMBIAR por URL de DATOS_ANFORAS
+            
+            GOBIERNO_NAMES: ['Lista 1', 'Lista 2', 'Lista 3'],
+            BRIGADA_NAMES: ['Lista Alfa', 'Lista Beta', 'Lista Gamma'],
+            AUTO_REFRESH_INTERVAL: 30000
+        };
+
+        let gobiernoChart = null, brigadaChart = null;
+        let datosAnforasCache = null, datosResultadosCache = null;
+
+        // ========== FUNCIÓN PRINCIPAL ==========
+        async function cargarTodosLosDatos() {
+            const btn = document.getElementById('refreshBtn');
+            const icon = btn.querySelector('i');
+            const text = btn.querySelector('span');
+            
+            icon.className = 'fas fa-spinner fa-pulse';
+            text.textContent = 'Actualizando...';
+            btn.disabled = true;
+            
+            try {
+                // Cargar ambos CSV en paralelo
+                const [respAnforas, respResultados] = await Promise.all([
+                    fetch(CONFIG.CSV_ANFORAS_URL, { cache: 'no-cache' }),
+                    fetch(CONFIG.CSV_RESULTADOS_URL, { cache: 'no-cache' })
+                ]);
+                
+                if (!respAnforas.ok || !respResultados.ok) throw new Error('Error al cargar datos');
+                
+                const csvAnforas = await respAnforas.text();
+                const csvResultados = await respResultados.text();
+                
+                // Parsear datos
+                const anforasData = parsearCSVAnforas(csvAnforas);
+                const resultadosData = parsearCSVResultados(csvResultados);
+                
+                datosAnforasCache = anforasData;
+                datosResultadosCache = resultadosData;
+                
+                // Calcular porcentajes
+                calcularPorcentajes(resultadosData.gobierno);
+                calcularPorcentajes(resultadosData.brigada);
+                
+                // Actualizar UI
+                actualizarTarjetasParticipacion(anforasData);
+                actualizarTablaGobierno(resultadosData.gobierno);
+                actualizarTablaBrigada(resultadosData.brigada);
+                actualizarGraficos(resultadosData);
+                actualizarTablaAnforas(anforasData);
+                actualizarUltimaActualizacion();
+                
+                icon.className = 'fas fa-sync-alt';
+                text.textContent = 'Actualizar';
+                btn.disabled = false;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                if (datosAnforasCache && datosResultadosCache) {
+                    actualizarTarjetasParticipacion(datosAnforasCache);
+                    actualizarTablaGobierno(datosResultadosCache.gobierno);
+                    actualizarTablaBrigada(datosResultadosCache.brigada);
+                    actualizarGraficos(datosResultadosCache);
+                }
+                icon.className = 'fas fa-exclamation-triangle';
+                text.textContent = 'Reintentar';
+                btn.disabled = false;
+            }
+        }
+
+        // ========== PARSEO DE CSV ==========
+        function parsearCSVAnforas(csvText) {
+            const lines = csvText.trim().split('\n');
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const cols = lines[i].split(',').map(c => c.trim().replace(/"/g, ''));
+                if (cols.length >= 14) {
+                    data.push({
+                        fecha: cols[0],
+                        nombre: cols[1],
+                        padron: parseInt(cols[2]) || 0,
+                        escrutados: parseInt(cols[3]) || 0,
+                        gob1: parseInt(cols[4]) || 0, gob2: parseInt(cols[5]) || 0, gob3: parseInt(cols[6]) || 0,
+                        gobBlanco: parseInt(cols[7]) || 0, gobNulo: parseInt(cols[8]) || 0,
+                        brig1: parseInt(cols[9]) || 0, brig2: parseInt(cols[10]) || 0, brig3: parseInt(cols[11]) || 0,
+                        brigBlanco: parseInt(cols[12]) || 0, brigNulo: parseInt(cols[13]) || 0
+                    });
+                }
+            }
+            return data;
+        }
+
+        function parsearCSVResultados(csvText) {
+            const lines = csvText.trim().split('\n');
+            const result = {
+                gobierno: {
+                    candidatos: CONFIG.GOBIERNO_NAMES.map(n => ({ nombre: n, votos: 0, porcentaje: 0 })),
+                    blancos: 0, nulos: 0, totalValidos: 0
+                },
+                brigada: {
+                    candidatos: CONFIG.BRIGADA_NAMES.map(n => ({ nombre: n, votos: 0, porcentaje: 0 })),
+                    blancos: 0, nulos: 0, totalValidos: 0
+                }
+            };
+            
+            lines.forEach((line, idx) => {
+                if (idx === 0) return;
+                const cols = line.split(',').map(c => c.trim().replace(/"/g, ''));
+                if (cols.length < 2) return;
+                
+                const label = cols[0];
+                const valor = parseInt(cols[1]) || 0;
+                
+                if (idx === 2) result.gobierno.candidatos[0].votos = valor;
+                else if (idx === 3) result.gobierno.candidatos[1].votos = valor;
+                else if (idx === 4) result.gobierno.candidatos[2].votos = valor;
+                else if (idx === 5) result.gobierno.blancos = valor;
+                else if (idx === 6) result.gobierno.nulos = valor;
+                else if (idx === 7) result.gobierno.totalValidos = valor;
+                else if (idx === 11) result.brigada.candidatos[0].votos = valor;
+                else if (idx === 12) result.brigada.candidatos[1].votos = valor;
+                else if (idx === 13) result.brigada.candidatos[2].votos = valor;
+                else if (idx === 14) result.brigada.blancos = valor;
+                else if (idx === 15) result.brigada.nulos = valor;
+                else if (idx === 16) result.brigada.totalValidos = valor;
+            });
+            
+            return result;
+        }
+
+        function calcularPorcentajes(eleccion) {
+            if (eleccion.totalValidos > 0) {
+                eleccion.candidatos.forEach(c => c.porcentaje = c.votos / eleccion.totalValidos);
+            }
+        }
+
+        // ========== ACTUALIZAR UI ==========
+        function actualizarTarjetasParticipacion(anforasData) {
+            // SUMAR EL PADRÓN REAL DE TODAS LAS ÁNFORAS
+            const totalPadron = anforasData.reduce((sum, a) => sum + a.padron, 0);
+            const totalEscrutados = anforasData.reduce((sum, a) => sum + a.escrutados, 0);
+            const participacion = totalPadron > 0 ? ((totalEscrutados / totalPadron) * 100).toFixed(2) : 0;
+            
+            document.getElementById('totalPadron').textContent = formatearNumero(totalPadron);
+            document.getElementById('totalEscrutados').textContent = formatearNumero(totalEscrutados);
+            document.getElementById('participacion').textContent = participacion + '%';
+        }
+
+        function actualizarTablaGobierno(data) {
+            actualizarTablaCandidatos('gobiernoTableBody', data, 'gob');
+            document.getElementById('gobBlanco').textContent = formatearNumero(data.blancos);
+            document.getElementById('gobNulo').textContent = formatearNumero(data.nulos);
+            document.getElementById('gobValidos').textContent = formatearNumero(data.totalValidos);
+        }
+
+        function actualizarTablaBrigada(data) {
+            actualizarTablaCandidatos('brigadaTableBody', data, 'brig');
+            document.getElementById('brigBlanco').textContent = formatearNumero(data.blancos);
+            document.getElementById('brigNulo').textContent = formatearNumero(data.nulos);
+            document.getElementById('brigValidos').textContent = formatearNumero(data.totalValidos);
+        }
+
+        function actualizarTablaCandidatos(tbodyId, data, tipo) {
+            const tbody = document.getElementById(tbodyId);
+            const colores = tipo === 'gob' ? ['primary', 'success', 'warning'] : ['accent', 'primary', 'success'];
+            const maxVotos = Math.max(...data.candidatos.map(c => c.votos));
+            
+            let html = '';
+            data.candidatos.forEach((c, i) => {
+                const votos = c.votos;
+                const pct = data.totalValidos > 0 ? (votos / data.totalValidos * 100).toFixed(2) : '0.00';
+                const pctNum = data.totalValidos > 0 ? (votos / data.totalValidos) : 0;
+                const esGanador = (votos === maxVotos && maxVotos > 0);
+                
+                html += `<tr class="${esGanador ? 'winner-row' : ''}">
+                    <td class="candidate-name"><i class="fas fa-user-graduate"></i>${c.nombre}${esGanador ? ' <i class="fas fa-crown winner-icon"></i>' : ''}</td>
+                    <td class="votes-count">${formatearNumero(votos)}</td>
+                    <td class="percentage">${pct}%</td>
+                    <td class="bar-col"><div class="bar-container"><div class="bar-bg"><div class="bar-fill ${colores[i]}" style="width:${Math.min(pctNum * 100, 100)}%;"></div></div><span class="bar-value">${pct}%</span></div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function actualizarTablaAnforas(anforasData) {
+            const tbody = document.getElementById('anforasTableBody');
+            let html = '';
+            
+            anforasData.forEach(a => {
+                const sumaGob = a.gob1 + a.gob2 + a.gob3 + a.gobBlanco + a.gobNulo;
+                const estado = (sumaGob === a.escrutados) ? '✅ OK' : '⚠️ DESCUADRE';
+                const estadoClass = (sumaGob === a.escrutados) ? 'ok' : 'warning';
+                
+                html += `<tr>
+                    <td>${a.nombre}</td><td>${a.padron}</td><td>${a.escrutados}</td>
+                    <td>${a.gob1}</td><td>${a.gob2}</td><td>${a.gob3}</td>
+                    <td>${a.brig1}</td><td>${a.brig2}</td><td>${a.brig3}</td>
+                    <td><span class="anfora-status ${estadoClass}">${estado}</span></td>
+                </tr>`;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        function actualizarGraficos(data) {
+            // Gobierno
+            if (gobiernoChart) gobiernoChart.destroy();
+            const ctxGob = document.getElementById('gobiernoChart').getContext('2d');
+            gobiernoChart = new Chart(ctxGob, {
+                type: 'bar',
+                data: {
+                    labels: data.gobierno.candidatos.map(c => c.nombre),
+                    datasets: [{
+                        label: 'Votos', data: data.gobierno.candidatos.map(c => c.votos),
+                        backgroundColor: ['#1a237e', '#2e7d32', '#f57c00'],
+                        borderRadius: 8, barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+            });
+            
+            // Brigada
+            if (brigadaChart) brigadaChart.destroy();
+            const ctxBrig = document.getElementById('brigadaChart').getContext('2d');
+            brigadaChart = new Chart(ctxBrig, {
+                type: 'bar',
+                data: {
+                    labels: data.brigada.candidatos.map(c => c.nombre),
+                    datasets: [{
+                        label: 'Votos', data: data.brigada.candidatos.map(c => c.votos),
+                        backgroundColor: ['#ff6d00', '#1a237e', '#2e7d32'],
+                        borderRadius: 8, barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+            });
+        }
+
+        function actualizarUltimaActualizacion() {
+            const ahora = new Date();
+            document.getElementById('lastUpdateText').textContent = 
+                `${ahora.toLocaleDateString('es-BO')} ${ahora.toLocaleTimeString('es-BO')}`;
+        }
+
+        function formatearNumero(n) {
+            return new Intl.NumberFormat('es-BO').format(n);
+        }
+
+        function toggleAnforas() {
+            const content = document.getElementById('anforasContent');
+            const icon = document.getElementById('toggleIcon');
+            content.classList.toggle('collapsed');
+            icon.className = content.classList.contains('collapsed') 
+                ? 'fas fa-chevron-right' : 'fas fa-chevron-down';
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarTodosLosDatos();
+            if (CONFIG.AUTO_REFRESH_INTERVAL > 0) {
+                setInterval(cargarTodosLosDatos, CONFIG.AUTO_REFRESH_INTERVAL);
+            }
+        });
+
+        window.cargarTodosLosDatos = cargarTodosLosDatos;
+        window.toggleAnforas = toggleAnforas;
+    </script>
+</body>
+</html>
